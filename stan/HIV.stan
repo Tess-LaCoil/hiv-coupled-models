@@ -2,7 +2,7 @@
 functions {
   vector hiv_des(real time,
                  vector state,
-                 real Gamma,
+                 real gamma,
                  real tau,
                  real nu,
                  real beta,
@@ -22,7 +22,7 @@ functions {
     vector[4] dadt;
 
     // compute derivatives
-    dadt[1] = Gamma*tau - nu*R - beta*V*R;
+    dadt[1] = gamma*tau - nu*R - beta*V*R;
     dadt[2] = rho*beta*V*R - nu*L - alpha*L;
     dadt[3] = (1 - rho)*beta*V*R + alpha*L - delta*E;
     dadt[4] = phi*E - sigma*V;
@@ -45,7 +45,7 @@ data {
 }
 
 parameters {
-  real<lower=.0001> Gamma;
+  real<lower=.0001> gamma;
   real<lower=.0001,upper=1> tau;
   real<lower=.0001> nu;
   real<lower=.0001> beta;
@@ -64,7 +64,7 @@ transformed parameters {
                                            a0,
                                            t0,
                                            t_obs,
-                                           Gamma,
+                                           gamma,
                                            tau,
                                            nu,
                                            beta,
@@ -74,7 +74,7 @@ transformed parameters {
                                            phi,
                                            sigma);
 
-  // vector of counts
+  // vector of predicted counts
   vector[n_obs] mu;
   for (j in 1:n_obs) {
     mu[j] = amount[j, 2] ;
@@ -83,7 +83,7 @@ transformed parameters {
 
 model {
   // priors
-  Gamma ~ lognormal(log(1), 1); //Production rate of CD4+
+  gamma ~ lognormal(log(1), 1); //Production rate of CD4+
   tau ~ beta(0.5, 0.5); //Fraction susceptible
   nu ~ lognormal(log(1), 1); //Removal rate of CD4+
   beta ~ lognormal(log(1), 1); //Rate of T-cell infection
@@ -103,11 +103,11 @@ model {
 }
 
 generated quantities {
-  array[n_fit] vector[4] amt_fit = ode_rk45(hiv_des,
+  array[n_fit] vector[4] hiv_fit = ode_rk45(hiv_des,
                                            a0,
                                            t0,
                                            t_fit,
-                                           Gamma,
+                                           gamma,
                                            tau,
                                            nu,
                                            beta,
@@ -117,8 +117,8 @@ generated quantities {
                                            phi,
                                            sigma);
   
-  vector[n_fit] c_fit;
+  vector[n_fit] fitted_vals;
   for (j in 1:n_fit) {
-    c_fit[j] = amt_fit[j, 2];
+    fitted_vals[j] = hiv_fit[j, 2];
   }
 }
