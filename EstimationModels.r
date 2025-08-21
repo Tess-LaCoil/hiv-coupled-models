@@ -81,19 +81,21 @@ par_names <- c(
 )
 true_vals <- tibble(
   true_val = params,
-  par = names(params)
+  par_name = names(params)
 )
 
 par_est_tibble <- tibble()
 for(i in 1:length(par_names)){
   temp <- tibble(
-    par = par_names[i],
-    par_mean = mean(est_data[[samples[i]]]),
-    par_median = median(est_data[[samples[i]]]),
-    par_CI_lower = quantile(est_data[[samples[i]]],0.025),
-    par_CI_upper = quantile(est_data[[samples[i]]],0.975),
+    par_name = par_names[i],
+    par_mean = mean(samples[[par_names[i]]]),
+    par_median = median(samples[[par_names[i]]]),
+    par_CI_lower = quantile(samples[[par_names[i]]],0.025),
+    par_CI_upper = quantile(samples[[par_names[i]]],0.975),
   )
+  par_est_tibble <- rbind(par_est_tibble, temp)
 }
 
-par_est_tibble <- left_join(par_est_tibble, true_vals, by = par) %>%
-  mutate(true_in_ci = (true_val >= par_CI_lower) && (true_val <= par_CI_upper))
+par_est_tibble <- left_join(par_est_tibble, true_vals, by = "par_name")
+par_est_tibble <- par_est_tibble %>%
+  mutate(true_in_ci = (true_val >= par_CI_lower) & (true_val <= par_CI_upper))

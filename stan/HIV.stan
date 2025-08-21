@@ -83,17 +83,17 @@ transformed parameters {
 
 model {
   // priors
-  gamma ~ lognormal(log(1), 1); //Production rate of CD4+
+  gamma ~ lognormal(0, 5); //Production rate of CD4+
   tau ~ beta(2, 2); //Fraction susceptible
-  nu ~ lognormal(log(1), 1); //Removal rate of CD4+
-  beta ~ lognormal(log(1), 1); //Rate of T-cell infection
+  nu ~ lognormal(0, 5); //Removal rate of CD4+
+  beta ~ lognormal(0, 5); //Rate of T-cell infection
   rho ~ beta(2, 2); //Fraction of infected cells that are latently infected
-  alpha ~ lognormal(log(1), 1); //Rate of latent cells becoming activated
-  delta ~ lognormal(log(1), 1); //Death/removal rate for actively infected cells
-  phi ~ lognormal(log(1), 1); //Virus production rate
-  sigma ~ lognormal(log(1), 1); //Virus removal rate
+  alpha ~ lognormal(0, 5); //Rate of latent cells becoming activated
+  delta ~ lognormal(0, 5); //Death/removal rate for actively infected cells
+  phi ~ lognormal(2, 5); //Virus production rate
+  sigma ~ lognormal(0, 5); //Virus removal rate
   
-  sigma_error ~ lognormal(log(0.1), 1); //Measurement error
+  sigma_error ~ lognormal(0, 5); //Measurement error
 
   // likelihood
   R_obs ~ normal(mu[1], sigma_error);
