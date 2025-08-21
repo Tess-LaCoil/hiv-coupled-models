@@ -68,6 +68,7 @@ stan_data <- list(
 #Load model and fit
 model <- stan_model(file="stan/HIV.stan")
 fit <- sampling(model, data=stan_data, 
-                iter=200,
-                chains=1,
-                cores=1)
+                iter=2000,
+                chains=2,
+                cores=2)
+saveRDS(fit, "output/fits/HIV_Stan.rds")

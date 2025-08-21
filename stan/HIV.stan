@@ -84,10 +84,10 @@ transformed parameters {
 model {
   // priors
   gamma ~ lognormal(log(1), 1); //Production rate of CD4+
-  tau ~ beta(0.5, 0.5); //Fraction susceptible
+  tau ~ beta(2, 2); //Fraction susceptible
   nu ~ lognormal(log(1), 1); //Removal rate of CD4+
   beta ~ lognormal(log(1), 1); //Rate of T-cell infection
-  rho ~ beta(0.5, 0.5); //Fraction of infected cells that are latently infected
+  rho ~ beta(2, 2); //Fraction of infected cells that are latently infected
   alpha ~ lognormal(log(1), 1); //Rate of latent cells becoming activated
   delta ~ lognormal(log(1), 1); //Death/removal rate for actively infected cells
   phi ~ lognormal(log(1), 1); //Virus production rate
