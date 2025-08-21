@@ -9,7 +9,7 @@ functions {
                  real rho,
                  real alpha,
                  real delta,
-                 real p,
+                 real phi,
                  real sigma) {
 
     // convenience...
@@ -25,7 +25,7 @@ functions {
     dadt[1] = Gamma*tau - nu*R - beta*V*R;
     dadt[2] = rho*beta*V*R - nu*L - alpha*L;
     dadt[3] = (1 - rho)*beta*V*R + alpha*L - delta*E;
-    dadt[4] = p*E - sigma*V;
+    dadt[4] = phi*E - sigma*V;
 
     return dadt;
   }
@@ -52,7 +52,7 @@ parameters {
   real<lower=.0001,upper=1> rho;
   real<lower=.0001> alpha;
   real<lower=.0001> delta;
-  real<lower=.0001> p;
+  real<lower=.0001> phi;
   real<lower=.0001> sigma;
   
   real<lower=.0001> sigma_error;
@@ -71,7 +71,7 @@ transformed parameters {
                                            rho,
                                            alpha,
                                            delta,
-                                           p,
+                                           phi,
                                            sigma);
 
   // vector of counts
@@ -90,7 +90,7 @@ model {
   rho ~ beta(0.5, 0.5); //Fraction of infected cells that are latently infected
   alpha ~ lognormal(log(1), 1); //Rate of latent cells becoming activated
   delta ~ lognormal(log(1), 1); //Death/removal rate for actively infected cells
-  p ~ lognormal(log(1), 1); //Virus production rate
+  phi ~ lognormal(log(1), 1); //Virus production rate
   sigma ~ lognormal(log(1), 1); //Virus removal rate
   
   sigma_error ~ lognormal(log(0.1), 1); //Measurement error
@@ -114,7 +114,7 @@ generated quantities {
                                            rho,
                                            alpha,
                                            delta,
-                                           p,
+                                           phi,
                                            sigma);
   
   vector[n_fit] c_fit;
