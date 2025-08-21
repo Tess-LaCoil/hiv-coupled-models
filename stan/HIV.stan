@@ -54,6 +54,8 @@ parameters {
   real<lower=.0001> delta;
   real<lower=.0001> p;
   real<lower=.0001> sigma;
+  
+  real<lower=.0001> sigma_error;
 }
 
 transformed parameters {
