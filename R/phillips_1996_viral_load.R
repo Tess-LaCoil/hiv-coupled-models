@@ -1,8 +1,8 @@
 viral_load <- function(t, cells, params) {
   with(as.list(c(cells, params)), {
-    dR_dt = (gamma * tau) - (mu * R) - (beta * V * R)
+    dR_dt = (gamma * tau) - (nu * R) - (beta * V * R)
     
-    dL_dt =  (rho * beta * V * R) - (mu * L) - (alpha * L)
+    dL_dt =  (rho * beta * V * R) - (nu * L) - (alpha * L)
     
     dV_dt = (phi * E) - (sigma * V)
     

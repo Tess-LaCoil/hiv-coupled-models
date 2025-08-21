@@ -19,7 +19,7 @@ cells <- c(R = 200,
 
 # Model parameters
 params <- c(gamma = 1.36, 
-            mu  = 0.00136, 
+            nu  = 0.00136, 
             tau  = 0.2, 
             beta = 0.00027,
             rho  = 0.1, 
@@ -69,6 +69,31 @@ stan_data <- list(
 model <- stan_model(file="stan/HIV.stan")
 fit <- sampling(model, data=stan_data, 
                 iter=2000,
-                chains=2,
-                cores=2)
+                chains=4,
+                cores=4)
 saveRDS(fit, "output/fits/HIV_Stan.rds")
+
+#Extract estimates
+samples <- rstan::extract(fit, permuted=TRUE)
+par_names <- c(
+  "gamma", "tau", "nu", "beta", "rho", "alpha", 
+  "delta", "phi", "sigma"
+)
+true_vals <- tibble(
+  true_val = params,
+  par = names(params)
+)
+
+par_est_tibble <- tibble()
+for(i in 1:length(par_names)){
+  temp <- tibble(
+    par = par_names[i],
+    par_mean = mean(est_data[[samples[i]]]),
+    par_median = median(est_data[[samples[i]]]),
+    par_CI_lower = quantile(est_data[[samples[i]]],0.025),
+    par_CI_upper = quantile(est_data[[samples[i]]],0.975),
+  )
+}
+
+par_est_tibble <- left_join(par_est_tibble, true_vals, by = par) %>%
+  mutate(true_in_ci = (true_val >= par_CI_lower) && (true_val <= par_CI_upper))
