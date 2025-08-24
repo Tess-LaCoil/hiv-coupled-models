@@ -3,9 +3,6 @@
 library(tidyverse)
 library(deSolve)
 library(rstan)
-#library(odin2)
-#library(dust2)
-#library(monty)
 
 #See up system with some data
 # Timestep
@@ -45,11 +42,13 @@ source("R/phillips_1996_viz.R")
 
 #Stan model adapted from https://blog.djnavarro.net/posts/2023-05-16_stan-ode/#multi-compartment-models
 #Add measurement error
-obs_data <- as_tibble(s_CD4_HIV_dynamics_solution) %>%
-  mutate(R_obs = R + rnorm(1,0,2),
-         L_obs = L*(1 + rnorm(1,0,0.01)), #1% error
-         V_obs = V*(1 + rnorm(1,0,0.01)),
-         E_obs = E*(1 + rnorm(1,0,0.01))
+obs_data <- as_tibble(s_CD4_HIV_dynamics_solution)[seq(from = 1, 
+                                                       to = nrow(s_CD4_HIV_dynamics_solution),
+                                                       by = 5),] %>%
+  mutate(R_obs = R + rnorm(1,0,0.001),
+         L_obs = L*(1 + rnorm(1,0,0.001)), #1% error
+         V_obs = V*(1 + rnorm(1,0,0.001)),
+         E_obs = E*(1 + rnorm(1,0,0.001))
          )
 
 stan_data <- list(
@@ -99,3 +98,4 @@ for(i in 1:length(par_names)){
 par_est_tibble <- left_join(par_est_tibble, true_vals, by = "par_name")
 par_est_tibble <- par_est_tibble %>%
   mutate(true_in_ci = (true_val >= par_CI_lower) & (true_val <= par_CI_upper))
+par_est_tibble
