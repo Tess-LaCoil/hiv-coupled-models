@@ -45,17 +45,15 @@ data {
 }
 
 parameters {
-  real<lower=.0001> gamma;
-  real<lower=.0001,upper=1> tau;
-  real<lower=.0001> nu;
-  real<lower=.0001> beta;
-  real<lower=.0001,upper=1> rho;
-  real<lower=.0001> alpha;
-  real<lower=.0001> delta;
-  real<lower=.0001> phi;
-  real<lower=.0001> sigma;
-  
-  real<lower=.0001> sigma_error;
+  real<lower=.0> gamma;
+  real<lower=.0,upper=1> tau;
+  real<lower=.0> nu;
+  real<lower=.0> beta;
+  real<lower=.0,upper=1> rho;
+  real<lower=.0> alpha;
+  real<lower=.0> delta;
+  real<lower=.0> phi;
+  real<lower=.0> sigma;
 }
 
 transformed parameters {
@@ -92,14 +90,12 @@ model {
   delta ~ lognormal(-1, 1); //Death/removal rate for actively infected cells
   phi ~ lognormal(2, 1); //Virus production rate
   sigma ~ lognormal(0, 1); //Virus removal rate
-  
-  sigma_error ~ lognormal(0, 1); //Measurement error
 
   // likelihood
-  R_obs ~ normal(mu[1], sigma_error);
-  L_obs ~ normal(mu[2], sigma_error);
-  E_obs ~ normal(mu[3], sigma_error);
-  V_obs ~ normal(mu[4], sigma_error);
+  R_obs ~ normal(mu[1], 0.1);
+  L_obs ~ normal(mu[2], 0.1);
+  E_obs ~ normal(mu[3], 0.1);
+  V_obs ~ normal(mu[4], 0.1);
 }
 
 generated quantities {

@@ -3,6 +3,7 @@
 library(tidyverse)
 library(deSolve)
 library(rstan)
+library(GGally)
 
 #See up system with some data
 # Timestep
@@ -71,13 +72,30 @@ fit <- sampling(model, data=stan_data,
                 chains=4,
                 cores=4)
 saveRDS(fit, "output/fits/HIV_Stan.rds")
+rm(fit)
 
 #Extract estimates
-samples <- rstan::extract(fit, permuted=TRUE)
+HIV_Stan <- readRDS("output/fits/HIV_Stan.rds")
+samples <- rstan::extract(HIV_Stan, permuted=TRUE)
 par_names <- c(
   "gamma", "tau", "nu", "beta", "rho", "alpha", 
   "delta", "phi", "sigma"
 )
+
+#Pairs plots and diagnostics
+traceplot(HIV_Stan, pars=par_names, inc_warmup=TRUE)
+
+pairs_plot_data <- bind_rows(samples[1:10]) %>%
+  mutate(log_gamma = log(gamma),
+         log_nu = log(nu),
+         log_beta = log(beta),
+         log_alpha = log(alpha),
+         log_delta = log(delta),
+         log_phi = log(phi),
+         log_sigma = log(sigma)
+         )
+ggpairs(pairs_plot_data[, c(2,5, 10:17)])
+
 true_vals <- tibble(
   true_val = params,
   par_name = names(params)
